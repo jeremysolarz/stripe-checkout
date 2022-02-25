@@ -10,17 +10,29 @@ This demo uses
 
 ## Running the sample
 
-1. Build the server
+1. If you don't have `pyenv` active (e.g. `eval "$(pyenv init -)"` in your rc file) in your shell activate the appropriate Python version via 
+
+~~~
+pyenv local 3.9.7
+~~~
+
+2. Activate the pipenv environment
+
+~~~
+pipenv shell
+~~~
+
+3. Build the server
 
 ~~~
 pip3 install -r requirements.txt
 ~~~
 
-2. Run the server
+4. Run the server
 
 ~~~
 export FLASK_APP=server.py
 python3 -m flask run --port=4242
 ~~~
 
-3. Go to [http://localhost:4242/checkout.html](http://localhost:4242/checkout.html)
+5. Go to [http://localhost:4242/checkout.html](http://localhost:4242/checkout.html)

@@ -36,3 +36,7 @@ python3 -m flask run --port=4242
 ~~~
 
 5. Go to [http://localhost:4242/checkout.html](http://localhost:4242/checkout.html)
+
+6. Test with different cards ([test cards](https://stripe.com/docs/testing))
+* No SCA: 4242424242424242
+* SCA: 4000056655665556

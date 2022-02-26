@@ -6,19 +6,67 @@ Stripe Sample.
 Python 3.6 or newer required.
 """
 import os
-from flask import Flask, redirect, apikey
+import json
+from configparser import ConfigParser
+
+from flask import Flask, redirect, request
 
 import stripe
+
+config = ConfigParser()
+config.read('api_key')
+
 # This is a public sample test API key.
 # Don’t submit any personally identifiable information in requests made with this key.
 # Sign in to see your own test API key embedded in code samples.
-stripe.api_key = apikey.get()
+stripe.api_key = config.get("keys","sk")
 
 app = Flask(__name__,
             static_url_path='',
             static_folder='public')
 
 YOUR_DOMAIN = 'http://localhost:4242'
+
+endpoint_secret = config.get("keys","whsec")
+
+@app.route('/webhook', methods=['POST'])
+def stripe_webhook():
+    """
+    See also the explanation in
+    https://stripe.com/docs/payments/checkout/fulfill-orders
+    since the examples are in Django, see here for an example in Flask
+    https://github.com/stripe/stripe-python/blob/master/examples/webhooks.py#L15
+    """
+    payload = request.data.decode("utf-8")
+    sig_header = request.headers.get("Stripe-Signature", None)
+
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        print('invalid payload')
+        return "Invalid payload", 400
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print('Invalid signature')
+        return "Invalid signature", 400
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        # Fulfill the purchase...
+        fulfill_order(session)
+
+    return event['type']
+
+def fulfill_order(session):
+  # TODO: fill me in
+  print("Fulfilling order")    
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():

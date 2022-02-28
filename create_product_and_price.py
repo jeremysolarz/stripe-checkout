@@ -8,7 +8,7 @@ product = stripe.Product.create(name = "T-shirt")
 price = stripe.Price.create(
   product=product.id,
   unit_amount=2000,
-  currency='eur',
+  currency='eur'
 )
 
 print(price)
